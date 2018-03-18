@@ -1,38 +1,73 @@
 <template>
   <div class="recommend" ref="recommend">
-    <div class="recommend-content">
-      <div class="slider-wrapper">
-
-      </div>
-      <div class="recommend-list">
-        <h1 class="list-title">热门歌单推荐</h1>
-        <ul>
-
-        </ul>
-      </div>
-    </div>
+      <scroll class="recommend-content" :data="distList">
+        <div>
+           <div v-if="recommends.length" class="slider-wrapper">
+              <slider :autoPlay='true'>
+                <div v-for="item in recommends">
+                  <a :href="item.linkUrl">
+                    <img class="needsclick" :src="item.picUrl" alt="暂无图片">
+                  </a>
+                </div>
+              </slider>
+           </div>
+          <div class="recommend-list">
+            <h1 class="list-title">热门歌单推荐</h1>
+            <ul>
+              <li class="item" v-for="(item,index) in distList" :key="index">
+                <div class="icon">
+                  <img width="60" height="60" :src="item.imgurl" alt="">
+                </div>
+                <div class="text">
+                  <h2 class="name" v-html="item.creator.name"></h2>
+                  <p class="desc" v-html="item.dissname"></p>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+       
+      </scroll>
+  
   </div>
 </template>
 
 <script type="text/ecmascript-6">
-import { getRecommond } from "api/recommend.js";
+import { getRecommond, getDistList } from "api/recommend.js";
 import { ERR_OK } from "api/config.js";
+import Slider from "base/slider/slider";
+import Scroll from "base/scroll/scroll";
 export default {
   data() {
-    return {};
+    return {
+      recommends: [],
+      distList: []
+    };
   },
   created() {
     this._getRecommend();
+    this._getDistList();
   },
   methods: {
+    //获取轮播图数据
     _getRecommend() {
       getRecommond().then(res => {
-        console.log(res);
+        // console.log(res);
         if (res.code == ERR_OK) {
-          console.log(res.data.slider);
+          this.recommends = res.data.slider;
         }
       });
+    },
+    //获取推荐歌单
+    _getDistList() {
+      getDistList().then(res => {
+        this.distList = res.data.list;
+      });
     }
+  },
+  components: {
+    Slider,
+    Scroll
   }
 };
 </script>
