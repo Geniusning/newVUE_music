@@ -1,12 +1,12 @@
 <template>
   <div class="recommend" ref="recommend">
-      <scroll class="recommend-content" :data="distList">
+      <scroll ref="scroll" class="recommend-content" :data="distList">
         <div>
            <div v-if="recommends.length" class="slider-wrapper">
               <slider :autoPlay='true'>
                 <div v-for="item in recommends">
                   <a :href="item.linkUrl">
-                    <img class="needsclick" :src="item.picUrl" alt="暂无图片">
+                    <img @load="loadImage" class="needsclick" :src="item.picUrl" alt="暂无图片">
                   </a>
                 </div>
               </slider>
@@ -63,6 +63,14 @@ export default {
       getDistList().then(res => {
         this.distList = res.data.list;
       });
+    },
+    //加载图片
+    loadImage() {
+      if (!this.checked) {
+        // this.$refs.scroll.refresh()
+        console.log(this.$refs.scroll);
+        this.checked = true;
+      }
     }
   },
   components: {
