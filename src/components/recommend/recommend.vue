@@ -16,7 +16,7 @@
             <ul>
               <li class="item" v-for="(item,index) in distList" :key="index">
                 <div class="icon">
-                  <img width="60" height="60" :src="item.imgurl" alt="">
+                  <img width="60" height="60" v-lazy="item.imgurl" alt="">
                 </div>
                 <div class="text">
                   <h2 class="name" v-html="item.creator.name"></h2>
@@ -26,13 +26,16 @@
             </ul>
           </div>
         </div>
-       
+        <div class="loading-container" v-show="!distList.length">
+          <loading :title="title"></loading>
+        </div>
       </scroll>
   
   </div>
 </template>
 
 <script type="text/ecmascript-6">
+import Loading from "base/loading/loading";
 import { getRecommond, getDistList } from "api/recommend.js";
 import { ERR_OK } from "api/config.js";
 import Slider from "base/slider/slider";
@@ -40,13 +43,16 @@ import Scroll from "base/scroll/scroll";
 export default {
   data() {
     return {
+      title: "客官请稍等···",
       recommends: [],
       distList: []
     };
   },
   created() {
     this._getRecommend();
-    this._getDistList();
+    setTimeout(() => {
+      this._getDistList();
+    }, 20);
   },
   methods: {
     //获取轮播图数据
@@ -75,7 +81,8 @@ export default {
   },
   components: {
     Slider,
-    Scroll
+    Scroll,
+    Loading
   }
 };
 </script>
